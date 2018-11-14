@@ -130,7 +130,7 @@
                             </p>
 
                         </header>
-                        <div class="card-content" @click="openModal(flight['id'])">
+                        <div class="card-content">
                             <div class="content">
                                 <p class="seperate__text">
                                     <span v-if="flight['flightDirection'] === 'A'"> Arrival: {{ flight['terminal'] }}</span>
@@ -293,12 +293,12 @@
                 }
                 else if (sort === 0) {
                     if (this.nextPage === 1) {
-                        this.$vs.notify({
-                            text: 'U kunt niet terug gaan',
-                            color: '#7957D5',
-                            position: 'bottom-center',
-                            time: 1500
-                        });
+                        // this.$vs.notify({
+                        //     text: 'U kunt niet terug gaan',
+                        //     color: '#7957D5',
+                        //     position: 'bottom-center',
+                        //     time: 1500
+                        // });
                     } else {
                         uri = this.flight + '&page=' + this.nextPage--
                     }
@@ -368,38 +368,38 @@
                     });
             },
 
-            openModal(id) {
-                this.colorModal = '#7957D5';
-                let flight = id;
-                let result = this.results.filter(obj => {
-                    return obj.id === flight
-                });
-                this.$vs.dialog({
-                    color: this.colorModal,
-                    title: `VLucht - ${result[0].mainFlight}`,
-                    text: 'Schedule date: ' + result[0].scheduleDate +
-                        ' Vlucht nummer: ' + result[0].flightNumber +
-                        ' Gate: ' + result[0].gate +
-                        ' Terminal: ' + result[0].terminal +
-                        ' Verwachte landingstijd: ' + result[0].estimatedLandingTime +
-                        ' Werkelijke landingstijd: ' + result[0].actualLandingTime +
-                        ' Aircraft registration: : ' + result[0].aircraftRegistration +
-                        ' Expected time boarding: : ' + result[0].expectedTimeBoarding +
-                        ' Expected time gate open: : ' + result[0].expectedTimeGateOpen +
-                        ' Expected time gate closing: :' + result[0].expectedTimeGateClosing,
-                    accept: this.acceptAlert(result[0].mainFlight)
-                })
-            },
+            // openModal(id) {
+            //     this.colorModal = '#7957D5';
+            //     let flight = id;
+            //     let result = this.results.filter(obj => {
+            //         return obj.id === flight
+            //     });
+            //     this.$vs.dialog({
+            //         color: this.colorModal,
+            //         title: `VLucht - ${result[0].mainFlight}`,
+            //         text: 'Schedule date: ' + result[0].scheduleDate +
+            //             ' Vlucht nummer: ' + result[0].flightNumber +
+            //             ' Gate: ' + result[0].gate +
+            //             ' Terminal: ' + result[0].terminal +
+            //             ' Verwachte landingstijd: ' + result[0].estimatedLandingTime +
+            //             ' Werkelijke landingstijd: ' + result[0].actualLandingTime +
+            //             ' Aircraft registration: : ' + result[0].aircraftRegistration +
+            //             ' Expected time boarding: : ' + result[0].expectedTimeBoarding +
+            //             ' Expected time gate open: : ' + result[0].expectedTimeGateOpen +
+            //             ' Expected time gate closing: :' + result[0].expectedTimeGateClosing,
+            //         accept: this.acceptAlert(result[0].mainFlight)
+            //     })
+            // },
 
-            acceptAlert(flight) {
-                // this.$vs.notify({
-                //     color: '#7957D5',
-                //     title: 'Je hebt ' + flight + ' bekeken',
-                //     text: 'Klik op de andere vluchten om meer informatie te bekijken.',
-                //     position: 'bottom-center',
-                //     time: 1500
-                // })
-            },
+            // acceptAlert(flight) {
+            //     // this.$vs.notify({
+            //     //     color: '#7957D5',
+            //     //     title: 'Je hebt ' + flight + ' bekeken',
+            //     //     text: 'Klik op de andere vluchten om meer informatie te bekijken.',
+            //     //     position: 'bottom-center',
+            //     //     time: 1500
+            //     // })
+            // },
 
             addBookmark(id) {
                 let idFlight = this.results.filter(obj => {
