@@ -10,9 +10,10 @@
             </div>
         </section>
 
-        <div class="tabs is-centered is-marginless" style="transition: 0.3s ease-in-out" :class="{headerFixed: scrollPosition > 100}">
+        <div id="scrollTo" class="tabs is-centered is-marginless" style="transition: 0.3s ease-in-out"
+             :class="{headerFixed: scrollPosition > 100}">
             <ul>
-                <li @click="changeDir('A')"  :class="{'is-active': isActive === 1, activeFixed: scrollPosition > 100}">
+                <li @click="changeDir('A')" :class="{'is-active': isActive === 1, activeFixed: scrollPosition > 100}">
                     <a>
                         <span class="icon has-text-info">
                             <i class="fas fa-plane-arrival">
@@ -70,16 +71,22 @@
         </div>
 
         <div>
-            <transition-group name="list" mode="in-out" enter-active-class="animated slideInLeft"
-                              leave-active-class="animated slideOutRight" class="grid hello">
-                <div class="card grid-element" v-for="(flight, index) in filteredResults" :key="index">
+            <transition-group name="list" mode="out-in" enter-active-class="animated slideInUp"
+                              leave-active-class="animated slideOutDown" class="grid hello">
+                <div :style="[checkBookmarked(bookmarks, flight['id']) ? {
+                'background' : 'rgba(132,41,147,0.15)',
+                'box-shadow' : '0px 0px 25px 0px rgba(132,41,147,0.15)',
+                'color' : 'rgb(132,41,147)',
+                'margin-top' : '10px'} : {'color' : 'red'}]" class="card grid-element con-vs-alert con-vs-alert-#842993"
+                     v-for="(flight, index) in filteredResults" :key="index">
                     <div>
                         <header class="card-header"
                                 :class="{'bookmarked ' : checkBookmarked(bookmarks, flight['id']) === true}">
                             <p class="card-header-title">
                                 {{ flight['flightName'] }}
                             </p>
-                            <p class="card-header-title" v-for="route in flight['route']" :key="route.id" v-if="route.length === 1">
+                            <p class="card-header-title" v-for="route in flight['route']" :key="route.id"
+                               v-if="route.length === 1">
                             <span v-for="dest in route" :key="dest.id">
                                 <span>
                                     <span v-if="flight['flightDirection'] === 'A'">
@@ -139,7 +146,7 @@
                                 <span v-if="statusCode[1]" class="icon has-text-info">
                                     <i class="fas fa-info-circle"></i>
                                 </span>
-                                <span v-html="status[statusCode]"></span>
+                                <span style="color: black;" v-html="status[statusCode]"></span>
                             </span>
                                 <br>
                                 <p v-if="flight['estimatedLandingTime']" class="seperate__text">
@@ -157,10 +164,10 @@
 
         </div>
         <br>
-        <div class="tabs is-centered is-marginless footer" >
+        <div class="tabs is-centered is-marginless footer">
             <ul>
                 <li>
-                    <a v-if="nextPage > 1" @click="refresh(0)" >
+                    <a v-if="nextPage > 1" @click="refresh(0)">
                         <span class="icon has-text-info">
                             <i class="fas fa-arrow-left is-white-text"></i>
                         </span>
@@ -174,9 +181,6 @@
                     </a>
                 </li>
             </ul>
-
-            <!--<a class="pagination-previous"></a>-->
-            <!--<a class="pagination-next"><i class="fas fa-arrow-right"></i></a>-->
         </div>
         <br>
     </div>
@@ -240,6 +244,11 @@
             },
 
             changeDir(direction) {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
+                });
                 this.showEmpty = false;
                 this.isActive = direction === 'A' ? 1 : 2;
                 let resultsCheck = this.allResults;
@@ -273,11 +282,16 @@
             refresh(sort) {
                 let uri = this.flight;
 
-                if(sort === 1){
-                    uri = this.flight + '&page=' + this.nextPage++
+                if (sort === 1) {
+                    uri = this.flight + '&page=' + this.nextPage++;
+                    window.scrollTo({
+                        top: 0,
+                        left: 0,
+                        behavior: 'smooth'
+                    });
                 }
-                else if(sort === 0){
-                    if(this.nextPage === 1) {
+                else if (sort === 0) {
+                    if (this.nextPage === 1) {
                         this.$vs.notify({
                             text: 'U kunt niet terug gaan',
                             color: '#7957D5',
@@ -394,13 +408,6 @@
                 localStorage.setItem('bookmarks', JSON.stringify(this.bookmarks));
 
                 this.bookmarks = JSON.parse(localStorage.getItem('bookmarks'));
-
-                this.$vs.notify({
-                    text: 'U heeft een vlucht toegevoegd aan uw favorieten',
-                    color: '#7957D5',
-                    position: 'bottom-center',
-                    time: 1500
-                });
             },
 
             removeBookmark(id) {
@@ -438,6 +445,11 @@
             },
 
             getBookmarked() {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: 'smooth'
+                });
                 this.isActive = 4;
                 this.results = [];
                 this.bookResults = [];
@@ -501,7 +513,8 @@
                 return this.results.filter(function (res) {
                     return res.flightName.toLowerCase().indexOf(self.search.toLowerCase()) >= 0;
                 });
-            }
+            },
+
         },
 
         beforeMount() {
@@ -539,7 +552,7 @@
         z-index: 1;
         background: #7957D5;
         width: 100%;
-        top:0px;
+        top: 0px;
         transition: 0.3s ease-in-out;
     }
 
@@ -558,7 +571,7 @@
     }
 
     .activeFixed:hover i {
-        color:#7957D5 !important;
+        color: #7957D5 !important;
         transition: 0.3s ease-in-out;
     }
 
@@ -574,11 +587,6 @@
     .card {
         margin-top: 20px;
         transition: 0.3s ease-in-out;
-    }
-
-    .bookmarked {
-        box-shadow: 0 2px 3px rgba(10, 10, 10, 0.1), 0 0 0 1px rgba(102, 51, 153, 0.9);
-        transition: ease-in-out;
     }
 
     .card-content {
@@ -665,9 +673,9 @@
         padding: 0;
         text-align: center;
         background: #7957D5;
-        -webkit-box-shadow: 1px -1px 4px -1px rgba(0,0,0,0.75);
-        -moz-box-shadow: 1px -1px 4px -1px rgba(0,0,0,0.75);
-        box-shadow: 1px -1px 4px -1px rgba(0,0,0,0.75);
+        -webkit-box-shadow: 1px -1px 4px -1px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 1px -1px 4px -1px rgba(0, 0, 0, 0.75);
+        box-shadow: 1px -1px 4px -1px rgba(0, 0, 0, 0.75);
     }
 
     .footer > * > * {
@@ -684,10 +692,10 @@
         transition: 0.3s ease-in-out;
         color: #7957D5 !important;
     }
-    .is-white-text{
+
+    .is-white-text {
         transition: 0.3s ease-in-out;
         color: white !important;
     }
-
 
 </style>
