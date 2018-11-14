@@ -51,11 +51,11 @@
 
         <div class="control">
             <div v-if="connect !== false" class="animated slideInUp">
-                <vs-alert v-if="showEmpty === true" class="animated slideInUp" title="Favorieten toevoegen"
+                <div v-if="showEmpty === true" class="animated slideInUp" title="Favorieten toevoegen"
                           active="true"
                           color="#842993">
                     Voeg favorieten toe door rechtsboven op een vlucht, het opslaan icoontje klik.
-                </vs-alert>
+                </div>
 
                 <div v-else class="animated slideInUp">
                     <label class="label" for="search">Zoek een vlucht per airline</label>
@@ -63,24 +63,25 @@
                 </div>
             </div>
             <div v-else class="control">
-                <vs-alert v-if="connect === false" class="animated slideInUp" title="Internet verbinding" active="true"
+                <div v-if="connect === false" class="animated slideInUp" title="Internet verbinding" active="true"
                           color="danger">
                     De verbinding met het internet is verbroken
-                </vs-alert>
+                </div>
             </div>
         </div>
 
         <div>
             <transition-group name="list" mode="out-in" enter-active-class="animated slideInUp"
-                              leave-active-class="animated slideOutDown" class="grid hello">
+                              leave-active-class="animated zoomOut" class="grid hello">
                 <div :style="[checkBookmarked(bookmarks, flight['id']) ? {
                 'background' : 'rgba(132,41,147,0.15)',
                 'box-shadow' : '0px 0px 25px 0px rgba(132,41,147,0.15)',
                 'color' : 'rgb(132,41,147)',
-                'margin-top' : '10px'} : {'color' : 'red'}]" class="card grid-element con-vs-alert con-vs-alert-#842993"
+                'margin-top' : '10px'} : {'color' : 'red'}]" class="card grid-element con-div con-div-#842993"
                      v-for="(flight, index) in filteredResults" :key="index">
                     <div>
-                        <header class="card-header"
+                        <header
+                                class="card-header"
                                 :class="{'bookmarked ' : checkBookmarked(bookmarks, flight['id']) === true}">
                             <p class="card-header-title">
                                 {{ flight['flightName'] }}
@@ -265,12 +266,12 @@
                         this.dirResults.push(vData[i]);
                     }
                 }
-                this.$vs.notify({
-                    text: extraText + bodyText,
-                    color: '#7957D5',
-                    position: 'bottom-center',
-                    time: 1500
-                });
+                // this.$vs.notify({
+                //     text: extraText + bodyText,
+                //     color: '#7957D5',
+                //     position: 'bottom-center',
+                //     time: 1500
+                // });
                 this.results = this.dirResults;
 
             },
@@ -311,7 +312,7 @@
                 this.results = [];
                 this.allResults = [];
                 this.dirResults = [];
-                this.$vs.loading();
+                // this.$vs.loading();
                 axios
                     .get(uri, {
                         headers: {
@@ -321,47 +322,47 @@
                         }
                     })
                     .then(response => {
-                        setTimeout(() => {
-                            this.$vs.loading.close()
-                        }, 1500);
+                        // setTimeout(() => {
+                        //     this.$vs.loading.close()
+                        // }, 1500);
                         this.results = response.data['flights'];
                         this.allResults = response.data['flights'];
 
                         localStorage.setItem('results', JSON.stringify(this.results));
                         localStorage.setItem('allResults', JSON.stringify(this.allResults));
 
-                        this.$vs.notify({
-                            text: 'De vluchten zijn opgehaald',
-                            color: '#7957D5',
-                            position: 'bottom-center',
-                            time: 1500
-                        });
+                        // this.$vs.notify({
+                        //     text: 'De vluchten zijn opgehaald',
+                        //     color: '#7957D5',
+                        //     position: 'bottom-center',
+                        //     time: 1500
+                        // });
                         this.connect = true;
                     })
                     .catch(error => {
                         console.log(error);
-                        setTimeout(() => {
-                            this.$vs.loading.close()
-                        }, 1000);
+                        // setTimeout(() => {
+                        //     this.$vs.loading.close()
+                        // }, 1000);
 
                         if (localStorage.getItem('results') != null) {
                             this.results = JSON.parse(localStorage.getItem('results'));
                             this.allResults = JSON.parse(localStorage.getItem('allResults'));
-
-                            this.$vs.notify({
-                                text: 'Kan niet vernieuwen',
-                                color: 'warning',
-                                position: 'bottom-center',
-                                time: 1500
-                            }, 500);
+                            //
+                            // this.$vs.notify({
+                            //     text: 'Kan niet vernieuwen',
+                            //     color: 'warning',
+                            //     position: 'bottom-center',
+                            //     time: 1500
+                            // }, 500);
                             this.connect = false;
                         } else {
-                            this.$vs.notify({
-                                text: 'Er is iets misgegaan',
-                                color: 'danger',
-                                position: 'bottom-center',
-                                time: 1500
-                            }, 500);
+                            // this.$vs.notify({
+                            //     text: 'Er is iets misgegaan',
+                            //     color: 'danger',
+                            //     position: 'bottom-center',
+                            //     time: 1500
+                            // }, 500);
                             this.connect = false;
                         }
                     });
@@ -391,13 +392,13 @@
             },
 
             acceptAlert(flight) {
-                this.$vs.notify({
-                    color: '#7957D5',
-                    title: 'Je hebt ' + flight + ' bekeken',
-                    text: 'Klik op de andere vluchten om meer informatie te bekijken.',
-                    position: 'bottom-center',
-                    time: 1500
-                })
+                // this.$vs.notify({
+                //     color: '#7957D5',
+                //     title: 'Je hebt ' + flight + ' bekeken',
+                //     text: 'Klik op de andere vluchten om meer informatie te bekijken.',
+                //     position: 'bottom-center',
+                //     time: 1500
+                // })
             },
 
             addBookmark(id) {
@@ -420,12 +421,12 @@
                 cache.splice(indexCache, 1);
                 localStorage.setItem('bookmarks', JSON.stringify(cache));
 
-                this.$vs.notify({
-                    text: 'U heeft een vlucht verwijderd van uw favorieten',
-                    color: 'firebrick',
-                    position: 'bottom-center',
-                    time: 1500
-                });
+                // this.$vs.notify({
+                //     text: 'U heeft een vlucht verwijderd van uw favorieten',
+                //     color: 'firebrick',
+                //     position: 'bottom-center',
+                //     time: 1500
+                // });
 
                 if (this.isActive === 4 && this.bookmarks.length === 0) {
                     this.showEmpty = true;
@@ -460,42 +461,42 @@
                     for (let i = 0; i < vData.length; i++) {
                         this.bookResults.push(vData[i]);
                     }
-                    this.$vs.notify({
-                        text: 'Uw opgeslaagde vluchten',
-                        color: '#7957D5',
-                        position: 'bottom-center',
-                        time: 1500
-                    });
+                    // this.$vs.notify({
+                    //     text: 'Uw opgeslaagde vluchten',
+                    //     color: '#7957D5',
+                    //     position: 'bottom-center',
+                    //     time: 1500
+                    // });
                     this.results = this.bookResults;
                     this.bookmarks = this.bookResults;
                 }
                 else if (Array.isArray(JSON.parse(localStorage.getItem('bookmarks'))) && JSON.parse(localStorage.getItem('bookmarks')).length) {
                     this.showEmpty = false;
-                    this.$vs.loading();
+                    // this.$vs.loading();
                     setTimeout(() => {
-                        this.$vs.loading.close();
+                        // this.$vs.loading.close();
                         let vData = JSON.parse(localStorage.getItem('bookmarks'));
                         for (let i = 0; i < vData.length; i++) {
                             this.dirResults.push(vData[i]);
                         }
-                        this.$vs.notify({
-                            text: 'Uw opgeslaagde vluchten',
-                            color: '#7957D5',
-                            position: 'bottom-center',
-                            time: 1500
-                        });
+                        // this.$vs.notify({
+                        //     text: 'Uw opgeslaagde vluchten',
+                        //     color: '#7957D5',
+                        //     position: 'bottom-center',
+                        //     time: 1500
+                        // });
                         this.results = this.dirResults;
                         this.bookmarks = this.dirResults;
                     }, 900);
                 }
 
                 else {
-                    this.$vs.notify({
-                        text: 'U heeft geen opgeslaagde vluchten',
-                        color: '#7957D5',
-                        position: 'bottom-center',
-                        time: 1500
-                    });
+                    // this.$vs.notify({
+                    //     text: 'U heeft geen opgeslaagde vluchten',
+                    //     color: '#7957D5',
+                    //     position: 'bottom-center',
+                    //     time: 1500
+                    // });
 
                     this.showEmpty = true;
                 }
@@ -696,6 +697,14 @@
     .is-white-text {
         transition: 0.3s ease-in-out;
         color: white !important;
+    }
+
+    .hide-this {
+        display: none;
+    }
+
+    .show {
+        display: block;
     }
 
 </style>
