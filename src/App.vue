@@ -51,13 +51,13 @@
 
         <div class="control">
             <div v-if="connect !== false" class="animated slideInUp">
-                <div v-if="showEmpty === true" class="animated slideInUp" title="Favorieten toevoegen"
-                          active="true"
-                          color="#842993">
-                    Voeg favorieten toe door rechtsboven op een vlucht, het opslaan icoontje klik.
+                <div v-if="isActive === 4" class="animated slideInUp bookmark-head">
+                    <div v-if="showEmpty === false" class="centered animated slideInUp">
+                        <a @click="clearBookmarked" class="button is-danger is-fullwidth ">Verwijder vluchten</a>
+                    </div>
                 </div>
 
-                <div v-else class="animated slideInUp">
+                <div v-if="isActive < 4" class="animated slideInUp">
                     <label class="label" for="search">Zoek een vlucht per airline</label>
                     <input class="input" id="search" type="text" placeholder="Bijvoorbeeld, KL" v-model="search">
                 </div>
@@ -266,12 +266,6 @@
                         this.dirResults.push(vData[i]);
                     }
                 }
-                // this.$vs.notify({
-                //     text: extraText + bodyText,
-                //     color: '#7957D5',
-                //     position: 'bottom-center',
-                //     time: 1500
-                // });
                 this.results = this.dirResults;
 
             },
@@ -293,12 +287,6 @@
                 }
                 else if (sort === 0) {
                     if (this.nextPage === 1) {
-                        // this.$vs.notify({
-                        //     text: 'U kunt niet terug gaan',
-                        //     color: '#7957D5',
-                        //     position: 'bottom-center',
-                        //     time: 1500
-                        // });
                     } else {
                         uri = this.flight + '&page=' + this.nextPage--
                     }
@@ -312,7 +300,6 @@
                 this.results = [];
                 this.allResults = [];
                 this.dirResults = [];
-                // this.$vs.loading();
                 axios
                     .get(uri, {
                         headers: {
@@ -322,84 +309,25 @@
                         }
                     })
                     .then(response => {
-                        // setTimeout(() => {
-                        //     this.$vs.loading.close()
-                        // }, 1500);
                         this.results = response.data['flights'];
                         this.allResults = response.data['flights'];
 
                         localStorage.setItem('results', JSON.stringify(this.results));
                         localStorage.setItem('allResults', JSON.stringify(this.allResults));
 
-                        // this.$vs.notify({
-                        //     text: 'De vluchten zijn opgehaald',
-                        //     color: '#7957D5',
-                        //     position: 'bottom-center',
-                        //     time: 1500
-                        // });
                         this.connect = true;
                     })
                     .catch(error => {
                         console.log(error);
-                        // setTimeout(() => {
-                        //     this.$vs.loading.close()
-                        // }, 1000);
-
                         if (localStorage.getItem('results') != null) {
                             this.results = JSON.parse(localStorage.getItem('results'));
                             this.allResults = JSON.parse(localStorage.getItem('allResults'));
-                            //
-                            // this.$vs.notify({
-                            //     text: 'Kan niet vernieuwen',
-                            //     color: 'warning',
-                            //     position: 'bottom-center',
-                            //     time: 1500
-                            // }, 500);
                             this.connect = false;
                         } else {
-                            // this.$vs.notify({
-                            //     text: 'Er is iets misgegaan',
-                            //     color: 'danger',
-                            //     position: 'bottom-center',
-                            //     time: 1500
-                            // }, 500);
                             this.connect = false;
                         }
                     });
             },
-
-            // openModal(id) {
-            //     this.colorModal = '#7957D5';
-            //     let flight = id;
-            //     let result = this.results.filter(obj => {
-            //         return obj.id === flight
-            //     });
-            //     this.$vs.dialog({
-            //         color: this.colorModal,
-            //         title: `VLucht - ${result[0].mainFlight}`,
-            //         text: 'Schedule date: ' + result[0].scheduleDate +
-            //             ' Vlucht nummer: ' + result[0].flightNumber +
-            //             ' Gate: ' + result[0].gate +
-            //             ' Terminal: ' + result[0].terminal +
-            //             ' Verwachte landingstijd: ' + result[0].estimatedLandingTime +
-            //             ' Werkelijke landingstijd: ' + result[0].actualLandingTime +
-            //             ' Aircraft registration: : ' + result[0].aircraftRegistration +
-            //             ' Expected time boarding: : ' + result[0].expectedTimeBoarding +
-            //             ' Expected time gate open: : ' + result[0].expectedTimeGateOpen +
-            //             ' Expected time gate closing: :' + result[0].expectedTimeGateClosing,
-            //         accept: this.acceptAlert(result[0].mainFlight)
-            //     })
-            // },
-
-            // acceptAlert(flight) {
-            //     // this.$vs.notify({
-            //     //     color: '#7957D5',
-            //     //     title: 'Je hebt ' + flight + ' bekeken',
-            //     //     text: 'Klik op de andere vluchten om meer informatie te bekijken.',
-            //     //     position: 'bottom-center',
-            //     //     time: 1500
-            //     // })
-            // },
 
             addBookmark(id) {
                 let idFlight = this.results.filter(obj => {
@@ -421,13 +349,6 @@
                 cache.splice(indexCache, 1);
                 localStorage.setItem('bookmarks', JSON.stringify(cache));
 
-                // this.$vs.notify({
-                //     text: 'U heeft een vlucht verwijderd van uw favorieten',
-                //     color: 'firebrick',
-                //     position: 'bottom-center',
-                //     time: 1500
-                // });
-
                 if (this.isActive === 4 && this.bookmarks.length === 0) {
                     this.showEmpty = true;
                 }
@@ -446,61 +367,50 @@
             },
 
             getBookmarked() {
+
+                //Scroll to the top of the page
                 window.scrollTo({
                     top: 0,
                     left: 0,
                     behavior: 'smooth'
                 });
-                this.isActive = 4;
-                this.results = [];
-                this.bookResults = [];
 
+                this.isActive = 4;      //Adds the active class to the nav index of bookmark
+                this.results = [];      //Clears the results array
+                this.bookResults = [];  //Clears the bookmarked results
+
+                //Check if the bookmarks array and the bookmarks localStorage is empty
                 if (this.bookmarks.length > 0 && this.bookmarks.length === JSON.parse(localStorage.getItem('bookmarks')).length) {
-                    this.showEmpty = false;
+                    this.showEmpty = false;      //If empty, change showEmpty to false
                     let vData = this.bookmarks;
                     for (let i = 0; i < vData.length; i++) {
-                        this.bookResults.push(vData[i]);
+                        this.bookResults.push(vData[i]);      //Adds the bookmarked flights to bookResults
                     }
-                    // this.$vs.notify({
-                    //     text: 'Uw opgeslaagde vluchten',
-                    //     color: '#7957D5',
-                    //     position: 'bottom-center',
-                    //     time: 1500
-                    // });
-                    this.results = this.bookResults;
-                    this.bookmarks = this.bookResults;
+                    this.results = this.bookResults;     //results now contains only the bookmarked item
+                    this.bookmarks = this.bookResults;   //bookmarks now contains the bookmared items
                 }
                 else if (Array.isArray(JSON.parse(localStorage.getItem('bookmarks'))) && JSON.parse(localStorage.getItem('bookmarks')).length) {
                     this.showEmpty = false;
-                    // this.$vs.loading();
                     setTimeout(() => {
-                        // this.$vs.loading.close();
                         let vData = JSON.parse(localStorage.getItem('bookmarks'));
                         for (let i = 0; i < vData.length; i++) {
                             this.dirResults.push(vData[i]);
                         }
-                        // this.$vs.notify({
-                        //     text: 'Uw opgeslaagde vluchten',
-                        //     color: '#7957D5',
-                        //     position: 'bottom-center',
-                        //     time: 1500
-                        // });
                         this.results = this.dirResults;
                         this.bookmarks = this.dirResults;
                     }, 900);
                 }
 
                 else {
-                    // this.$vs.notify({
-                    //     text: 'U heeft geen opgeslaagde vluchten',
-                    //     color: '#7957D5',
-                    //     position: 'bottom-center',
-                    //     time: 1500
-                    // });
-
                     this.showEmpty = true;
                 }
-            }
+            },
+
+            clearBookmarked(){
+                this.bookmarks = [];
+                this.results = [];
+                localStorage.setItem('bookmarks', JSON.stringify([]));
+            },
 
         },
 
@@ -706,5 +616,11 @@
     .show {
         display: block;
     }
+
+    .centered {
+        display: flex;
+        justify-content: space-around;
+    }
+
 
 </style>
