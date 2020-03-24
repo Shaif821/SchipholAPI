@@ -1,16 +1,16 @@
 <template>
-    <div id="app">
-        <section class="hero is-primary">
+    <div id="app animated zoomIn">
+        <section class="hero is-primary animated slideInDown">
             <div class="hero-body">
                 <div class="container">
                     <h1 class="title is-1">
-                        Schiphol API
+                        <!--Schiphol API-->
                     </h1>
                 </div>
             </div>
         </section>
 
-        <div id="scrollTo" class="tabs is-centered is-marginless" style="transition: 0.3s ease-in-out"
+        <div id="scrollTo" class="tabs is-centered is-marginless animated zoomIn" style="transition: 0.3s ease-in-out"
              :class="{headerFixed: scrollPosition > 100}">
             <ul>
                 <li @click="changeDir('A')" :class="{'is-active': isActive === 1, activeFixed: scrollPosition > 100}">
@@ -49,7 +49,7 @@
             </ul>
         </div>
 
-        <div class="control">
+        <div class="control animated zoomIn">
             <div v-if="connect !== false" class="animated slideInUp">
                 <div v-if="isActive === 4" class="animated slideInUp bookmark-head">
                     <div v-if="showEmpty === false" class="centered animated slideInUp">
@@ -84,7 +84,7 @@
                                 class="card-header"
                                 :class="{'bookmarked ' : checkBookmarked(bookmarks, flight['id']) === true}">
                             <p class="card-header-title">
-                                {{ flight['flightName'] }}
+                                {{ flight['flightName'] }} - {{ typeof flight['codeshares']}}
                             </p>
                             <p class="card-header-title" v-for="route in flight['route']" :key="route.id"
                                v-if="route.length === 1">
@@ -165,7 +165,7 @@
 
         </div>
         <br>
-        <div class="tabs is-centered is-marginless footer">
+        <div class="tabs is-centered is-marginless footer animated slideInUp">
             <ul>
                 <li>
                     <a v-if="nextPage > 1" @click="refresh(0)">

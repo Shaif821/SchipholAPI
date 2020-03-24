@@ -1,3 +1,7 @@
 module.exports = {
-    baseUrl: "/Flight/"
+    baseUrl: "/Flight/",
+
+    pwa: {
+      name: 'Schiphol API'
+    }
 };
